@@ -1,11 +1,28 @@
 // src/index.ts
 
+// ============================================================
+//  D — Dependency Inversion Principle
+//  "Los modulos de alto nivel no deben depender de modulos
+//   de bajo nivel. Ambos deben depender de abstracciones."
+// ============================================================
+//
+//  CAMBIOS APLICADOS:
+//  ─────────────────
+//  Antes, servicios creaban dependencias internamente.
+//  Ahora, este archivo es el Composition Root:
+//  instancia clases concretas e inyecta interfaces.
+// ============================================================
+
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+import { PrismaOrderRepository } from "./repositories/OrderRepository";
+import { PrismaProductRepository } from "./repositories/ProductRepository";
+import { NotificationService } from "./services/NotificationService";
+import { OrderValidator } from "./validators/OrderValidator";
+import { OrderService } from "./services/OrderService";
+import { OrderController } from "./controllers/OrderController";
 
-const prisma = new PrismaClient();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -14,67 +31,40 @@ app.use(express.json());
 // Funciona, pero OrderService está acoplado a Prisma y nodemailer.
 // No se puede testear ni cambiar de BD sin modificar OrderService.
 
-class NotificationServiceBefore {
-  async notify(email: string, orderId: number, total: number) {
-    // nodemailer creado aquí adentro — acoplado directamente
-    console.log(`[Email directo] → ${email} | Orden #${orderId} | $${total}`);
-  }
-}
+// class NotificationServiceBefore {
+//   async notify(email: string, orderId: number, total: number) {
+//     console.log(`[Email directo] -> ${email} | Orden #${orderId} | $${total}`);
+//   }
+// }
+//
+// class OrderServiceBefore {
+//   private notifier = new NotificationServiceBefore();
+//
+//   async createOrder(customerEmail: string, total: number, items: any[]) {
+//     // acoplado a Prisma
+//     return { customerEmail, total, items };
+//   }
+// }
 
-class OrderServiceBefore {
-  // Las dependencias se crean aquí adentro — no se pueden sustituir
-  private notifier = new NotificationServiceBefore();
+// ── ✅ DESPUES — aplicando D (Composition Root) ───────────────
+const orderRepo = new PrismaOrderRepository();
+const productRepo = new PrismaProductRepository();
+const notifier = new NotificationService();
+const validator = new OrderValidator();
 
-  async createOrder(customerEmail: string, total: number, items: any[]) {
-    const order = await prisma.order.create({
-      data: { customerEmail, total, status: "PENDING", items: { create: items } },
-      include: { items: { include: { product: true } } },
-    });
-    // Acoplado a NotificationServiceBefore — no se puede cambiar
-    await this.notifier.notify(customerEmail, order.id, total);
-    return order;
-  }
-
-  async getOrders() {
-    return prisma.order.findMany({
-      include: { items: { include: { product: true } } },
-    });
-  }
-}
-
-class ProductServiceBefore {
-  async getProducts() {
-    return prisma.product.findMany();
-  }
-  async createProduct(name: string, price: number, stock: number) {
-    return prisma.product.create({ data: { name, price, stock } });
-  }
-}
-
-const orderService   = new OrderServiceBefore();
-const productService = new ProductServiceBefore();
+const orderService = new OrderService(orderRepo, productRepo, notifier, validator);
+const orderController = new OrderController(orderService);
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
-app.get("/products",  async (_req, res) => res.json(await productService.getProducts()));
+app.get("/products",  async (_req, res) => res.json(await productRepo.findAll()));
 app.post("/products", async (req, res) => {
   const { name, price, stock } = req.body;
-  res.status(201).json(await productService.createProduct(name, price, stock));
+  res.status(201).json(await productRepo.create({ name, price, stock }));
 });
 
-app.get("/orders",  async (_req, res) => res.json(await orderService.getOrders()));
-app.post("/orders", async (req, res) => {
-  const { customerEmail, items } = req.body;
-  let total = 0;
-  const orderItems = [];
-  for (const item of items) {
-    const product = await prisma.product.findUnique({ where: { id: item.productId } });
-    if (!product) { res.status(404).json({ error: "Producto no encontrado" }); return; }
-    total += product.price * item.quantity;
-    orderItems.push({ productId: item.productId, quantity: item.quantity, unitPrice: product.price });
-  }
-  res.status(201).json(await orderService.createOrder(customerEmail, total, orderItems));
-});
+app.get("/orders", (req, res) => orderController.getOrders(req, res));
+app.post("/orders", (req, res) => orderController.createOrder(req, res));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

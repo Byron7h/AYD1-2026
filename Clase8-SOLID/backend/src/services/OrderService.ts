@@ -1,21 +1,24 @@
 // src/services/OrderService.ts
 // ============================================================
-//  S — Single Responsibility Principle
-//  Responsabilidad única: orquestar la lógica de negocio de órdenes.
-//  No sabe de HTTP, no envía emails directamente, no valida inputs.
+//  D — Dependency Inversion Principle
+//  OrderService depende de abstracciones, no de Prisma ni nodemailer.
 // ============================================================
 
-import { PrismaClient } from "@prisma/client";
 import { OrderValidator } from "../validators/OrderValidator";
-import { NotificationService } from "./NotificationService";
-import { CreateOrderDTO, OrderFilters } from "../interfaces";
-
-const prisma = new PrismaClient();
+import {
+  CreateOrderDTO,
+  INotificationService,
+  IOrderRepository,
+  IProductReader,
+  OrderFilters,
+} from "../interfaces";
 
 export class OrderService {
   constructor(
-    private validator: OrderValidator,
-    private notifier: NotificationService
+    private orderRepo: IOrderRepository,
+    private productRepo: IProductReader,
+    private notifier: INotificationService,
+    private validator: OrderValidator
   ) {}
 
   async createOrder(data: CreateOrderDTO) {
@@ -24,9 +27,9 @@ export class OrderService {
 
     // Responsabilidad de negocio: verificar stock y calcular total
     let total = 0;
-    const orderItems = [];
+    const orderItems: { productId: number; quantity: number; unitPrice: number }[] = [];
     for (const item of data.items) {
-      const product = await prisma.product.findUnique({ where: { id: item.productId } });
+      const product = await this.productRepo.findById(item.productId);
       if (!product) throw new Error(`Producto ${item.productId} no encontrado`);
       if (product.stock < item.quantity) throw new Error(`Stock insuficiente para ${product.name}`);
       total += product.price * item.quantity;
@@ -34,10 +37,7 @@ export class OrderService {
     }
 
     // Persistir la orden
-    const order = await prisma.order.create({
-      data: { customerEmail: data.customerEmail, total, status: "PENDING", items: { create: orderItems } },
-      include: { items: { include: { product: true } } },
-    });
+    const order = await this.orderRepo.create(data, total, orderItems);
 
     // Delega notificación — OrderService no sabe cómo se envían emails
     await this.notifier.notifyOrderCreated(data.customerEmail, order.id, total);
@@ -45,12 +45,6 @@ export class OrderService {
   }
 
   async getOrders(filters?: OrderFilters) {
-    return prisma.order.findMany({
-      where: {
-        ...(filters?.status        && { status:        filters.status as any }),
-        ...(filters?.customerEmail && { customerEmail: filters.customerEmail }),
-      },
-      include: { items: { include: { product: true } } },
-    });
+    return this.orderRepo.findAll(filters);
   }
 }

@@ -6,8 +6,9 @@
 // ============================================================
 
 import nodemailer from "nodemailer";
+import { INotificationService } from "../interfaces";
 
-export class NotificationService {
+export class NotificationService implements INotificationService {
   async notifyOrderCreated(email: string, orderId: number, total: number): Promise<void> {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
