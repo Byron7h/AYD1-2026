@@ -1,7 +1,13 @@
 # Etapa 1: builder
 # Aqui se instala todo (incluyendo herramientas de build)
 # y se compila TypeScript a JavaScript.
-FROM node:20-alpine AS builder
+FROM node:20-bookworm-slim AS builder
+
+# Prisma necesita detectar OpenSSL correctamente para generar
+# el engine compatible con esta imagen.
+RUN apt-get update -y \
+ && apt-get install -y --no-install-recommends openssl ca-certificates wget \
+ && rm -rf /var/lib/apt/lists/*
 
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
@@ -21,7 +27,12 @@ RUN npm run build
 
 # Etapa 2: runtime final
 # Solo se copia lo necesario para ejecutar la app.
-FROM node:20-alpine AS production
+FROM node:20-bookworm-slim AS production
+
+# Mantener OpenSSL en runtime para que Prisma cargue su engine.
+RUN apt-get update -y \
+ && apt-get install -y --no-install-recommends openssl ca-certificates wget \
+ && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Instalamos solo dependencias de produccion
