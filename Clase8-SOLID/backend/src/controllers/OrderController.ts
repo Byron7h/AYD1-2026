@@ -30,6 +30,8 @@
 
 import { Request, Response } from "express";
 import { OrderService } from "../services/OrderService";
+import { IOrderRepository } from "../interfaces";
+import { PaymentProcessorFactory } from "../services/PaymentProcessors";
 
 // import { PrismaClient } from "@prisma/client";
 // import nodemailer from "nodemailer";
@@ -97,7 +99,10 @@ import { OrderService } from "../services/OrderService";
 // Toda la lógica está delegada a sus clases especializadas.
 
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private orderRepo: IOrderRepository
+  ) {}
 
   async createOrder(req: Request, res: Response): Promise<void> {
     try {
@@ -118,6 +123,39 @@ export class OrderController {
       res.json(orders);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async processPayment(req: Request, res: Response): Promise<void> {
+    try {
+      const orderId = Number(req.params.orderId ?? req.body.orderId);
+      const { paymentMethod, ...paymentData } = req.body;
+
+      if (!Number.isInteger(orderId) || orderId <= 0) {
+        res.status(400).json({ error: "orderId inválido" });
+        return;
+      }
+      if (!paymentMethod) {
+        res.status(400).json({ error: "paymentMethod es requerido" });
+        return;
+      }
+
+      const order = await this.orderRepo.findById(orderId);
+      if (!order) {
+        res.status(404).json({ error: "Orden no encontrada" });
+        return;
+      }
+
+      const processor = PaymentProcessorFactory.get(paymentMethod);
+      const result = await processor.process(orderId, order.total, paymentData);
+
+      if (result.success) {
+        await this.orderRepo.updateStatus(orderId, "CONFIRMED");
+      }
+
+      res.json({ orderId, payment: result });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 }

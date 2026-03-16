@@ -53,7 +53,7 @@ const notifier = new NotificationService();
 const validator = new OrderValidator();
 
 const orderService = new OrderService(orderRepo, productRepo, notifier, validator);
-const orderController = new OrderController(orderService);
+const orderController = new OrderController(orderService, orderRepo);
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
@@ -65,6 +65,7 @@ app.post("/products", async (req, res) => {
 
 app.get("/orders", (req, res) => orderController.getOrders(req, res));
 app.post("/orders", (req, res) => orderController.createOrder(req, res));
+app.post("/orders/:orderId/payment", (req, res) => orderController.processPayment(req, res));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
