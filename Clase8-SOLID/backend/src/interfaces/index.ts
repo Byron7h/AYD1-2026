@@ -1,19 +1,24 @@
 // src/interfaces/index.ts
 
 // ============================================================
-//  Definicion base: que es una interfaz
+//  I — Interface Segregation Principle
+//  "Los clientes no deben depender de interfaces que no usan"
 // ============================================================
-//  Una interfaz en TypeScript es un contrato.
-//  Define QUE metodos/propiedades debe tener una clase u objeto,
-//  pero no define COMO se implementan.
 //
-//  Beneficios clave en esta arquitectura:
-//    - Desacopla capas: el controller/service depende del contrato,
-//      no de Prisma ni de una clase concreta.
-//    - Permite reemplazar implementaciones sin romper consumidores
-//      (por ejemplo, cambiar de Prisma a otra fuente de datos).
-//    - Mejora pruebas: se pueden usar mocks/fakes que cumplan la
-//      interfaz para testear logica de negocio facilmente.
+//  CAMBIOS APLICADOS:
+//  ─────────────────
+//  En la version anterior habia una sola interfaz IOrderRepository
+//  con todos los metodos: findAll, findById, create, updateStatus.
+//
+//  Problema:
+//    ReportService solo necesita leer ordenes (findAll, findById).
+//    Pero si implementa IOrderRepository, TypeScript le exige
+//    tambien create() y updateStatus() — metodos que nunca va a usar.
+//
+//  Despues de aplicar I:
+//    IOrderReader  -> findAll, findById       (solo lectura)
+//    IOrderWriter  -> create, updateStatus    (solo escritura)
+//    IOrderRepository extiende ambas          (acceso completo)
 // ============================================================
 
 import { Order, OrderItem, Product } from "@prisma/client";
@@ -36,14 +41,43 @@ export type OrderFilters = {
 // Funciona si todos los que la implementan necesitan todo,
 // pero obliga a clases de solo-lectura a tener métodos de escritura.
 
-export interface IOrderRepositoryBefore {
+// export interface IOrderRepositoryBefore {
+//   findAll(filters?: OrderFilters): Promise<OrderWithItems[]>;
+//   findById(id: number): Promise<Order | null>;
+//   create(data: CreateOrderDTO, total: number, items: any[]): Promise<OrderWithItems>;
+//   updateStatus(id: number, status: string): Promise<Order>;
+// }
+
+// ── ✅ DESPUES — aplicando I ─────────────────────────────────
+// Solo lectura — ReportService implementa solo esto.
+export interface IOrderReader {
   findAll(filters?: OrderFilters): Promise<OrderWithItems[]>;
   findById(id: number): Promise<Order | null>;
+}
+
+// Solo escritura — quien necesite crear/actualizar implementa esto.
+export interface IOrderWriter {
   create(data: CreateOrderDTO, total: number, items: any[]): Promise<OrderWithItems>;
   updateStatus(id: number, status: string): Promise<Order>;
+}
 
-  // Una clase de reportes que implemente esta interfaz
-  // está obligada a implementar create() y updateStatus()
-  // aunque jamás los use. Si alguien los llama por error,
-  // el programa falla. No hay forma de saberlo en compilación.
+// Repositorio completo = las dos juntas.
+export interface IOrderRepository extends IOrderReader, IOrderWriter {}
+
+// Interfaces de Producto — mismo patron.
+export interface IProductReader {
+  findAll(): Promise<Product[]>;
+  findById(id: number): Promise<Product | null>;
+}
+
+export interface IProductWriter {
+  create(data: { name: string; price: number; stock: number }): Promise<Product>;
+  updateStock(id: number, newStock: number): Promise<Product>;
+}
+
+export interface IProductRepository extends IProductReader, IProductWriter {}
+
+// Abstraccion para notificaciones (apoya D tambien).
+export interface INotificationService {
+  notifyOrderCreated(email: string, orderId: number, total: number): Promise<void>;
 }
