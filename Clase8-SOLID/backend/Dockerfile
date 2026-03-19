@@ -1,4 +1,5 @@
-# Etapa 1: builder
+# Etapa 1: builder --------------------------------------------------
+    
 # Aqui se instala todo (incluyendo herramientas de build)
 # y se compila TypeScript a JavaScript.
 FROM node:20-bookworm-slim AS builder
@@ -25,7 +26,8 @@ RUN npm ci && npx prisma generate
 COPY src ./src
 RUN npm run build
 
-# Etapa 2: runtime final
+# Etapa 2: runtime final --------------------------------------------------
+
 # Solo se copia lo necesario para ejecutar la app.
 FROM node:20-bookworm-slim AS production
 
