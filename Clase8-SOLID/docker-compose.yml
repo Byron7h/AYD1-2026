@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
     # Healthcheck para que Compose sepa cuando backend esta listo.
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 5s
       retries: 3
