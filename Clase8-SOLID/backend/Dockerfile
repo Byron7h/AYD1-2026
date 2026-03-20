@@ -1,13 +1,11 @@
-# Etapa 1: builder
+# Etapa 1: builder --------------------------------------------------
+
 # Aqui se instala todo (incluyendo herramientas de build)
 # y se compila TypeScript a JavaScript.
-FROM node:20-bookworm-slim AS builder
+FROM node:20-alpine AS builder
 
-# Prisma necesita detectar OpenSSL correctamente para generar
-# el engine compatible con esta imagen.
-RUN apt-get update -y \
- && apt-get install -y --no-install-recommends openssl ca-certificates wget \
- && rm -rf /var/lib/apt/lists/*
+# Prisma requiere OpenSSL en Alpine para generar/usar su engine.
+RUN apk add --no-cache openssl
 
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
@@ -25,22 +23,23 @@ RUN npm ci && npx prisma generate
 COPY src ./src
 RUN npm run build
 
-# Etapa 2: runtime final
-# Solo se copia lo necesario para ejecutar la app.
-FROM node:20-bookworm-slim AS production
+# Quitamos dependencias de desarrollo para reutilizar node_modules en runtime.
+RUN npm prune --omit=dev
 
-# Mantener OpenSSL en runtime para que Prisma cargue su engine.
-RUN apt-get update -y \
- && apt-get install -y --no-install-recommends openssl ca-certificates wget \
- && rm -rf /var/lib/apt/lists/*
+# Etapa 2: runtime final --------------------------------------------------
+
+# Solo se copia lo necesario para ejecutar la app.
+FROM node:20-alpine AS production
+
+# Prisma requiere OpenSSL tambien en runtime.
+RUN apk add --no-cache openssl
 WORKDIR /app
 
-# Instalamos solo dependencias de produccion
+# Manifest para trazabilidad de imagen final
 COPY package*.json ./
-RUN npm ci --omit=dev
 
 # Copiamos artefactos minimos desde builder
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules ./node_modules 
 COPY --from=builder /app/dist ./dist
 COPY prisma ./prisma/
 
