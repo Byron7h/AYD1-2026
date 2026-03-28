@@ -60,11 +60,12 @@ pytest --cov=src --cov-report=term-missing
 Salida esperada (resumen):
 
 ```text
-Name                        Stmts   Miss  Cover
-src/auth_service.py           15      0   100%
-src/appointment_service.py    17      0   100%
-src/app.py                    18      0   100%
-TOTAL                         50      0   100%
+Name                         Stmts   Miss  Cover
+src/__init__.py                  0      0   100%
+src/app.py                      16      2    88%
+src/appointment_service.py      12      1    92%
+src/auth_service.py             13      1    92%
+TOTAL                           41      4    90%
 ```
 
 ## Que prueba cada test
