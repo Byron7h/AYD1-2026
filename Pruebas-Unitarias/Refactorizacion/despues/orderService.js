@@ -1,21 +1,37 @@
-function buildOrderService({ orderRepo, paymentGateway }) {
-  // Refactor clave: inyeccion de dependencias.
-  // Ahora el servicio no crea DB ni gateway internamente.
-  // Esto habilita pruebas unitarias reales con mocks/stubs.
-  return {
-    placeOrder({ userId, items }) {
-      // Regla de negocio pura: calcular total.
-      const total = items.reduce((sum, item) => sum + item.price, 0);
-      if (total <= 0) {
-        throw new Error("INVALID_TOTAL");
-      }
+class OrderService {
+  constructor({ db = new Database(), paymentGateway = new PaymentGateway() } = {}) {
+    this.db = db;
+    this.paymentGateway = paymentGateway;
+  }
 
-      // Dependencia externa inyectada: facil de controlar en tests.
-      const paymentId = paymentGateway.charge({ userId, total });
-      // Persistencia inyectada: tambien verificable por test.
-      return orderRepo.save({ userId, items, total, paymentId });
+  placeOrder({ userId, items }) {
+    // Regla de negocio: calcular total del pedido.
+    const total = items.reduce((sum, item) => sum + item.price, 0);
+    if (total <= 0) {
+      // Regla de validacion del dominio.
+      throw new Error("INVALID_TOTAL");
     }
-  };
+
+    const paymentId = this.paymentGateway.charge({ userId, total });
+    return this.db.saveOrder({ userId, items, total, paymentId });
+  }
 }
 
-module.exports = { buildOrderService };
+class Database {
+  saveOrder(order) {
+    // Simulacion minima de guardado.
+    return { id: 1, ...order };
+  }
+}
+
+class PaymentGateway {
+  charge({ total }) {
+    // Regla de ejemplo del gateway: montos altos se rechazan.
+    if (total > 1000) {
+      throw new Error("PAYMENT_REJECTED");
+    }
+    return "pay-001";
+  }
+}
+
+module.exports = { OrderService, Database, PaymentGateway };

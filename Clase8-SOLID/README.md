@@ -150,3 +150,24 @@ El proyecto mantiene comportamiento funcional mientras mejora:
 - y desacoplamiento entre capas.
 
 Eso es el objetivo central de aplicar SOLID en un sistema real.
+
+## Video de apoyo (Docker) y desglose por tiempo
+
+Video:
+
+- Video Ejemplo (Docker): [https://drive.google.com/drive/folders/1avflzeWsLA2qTuLtxIK5o2xP_fH-otT3?usp=sharing](https://drive.google.com/drive/folders/1avflzeWsLA2qTuLtxIK5o2xP_fH-otT3?usp=sharing)
+
+Desglose del contenido del video:
+
+| Tiempo | Contenido |
+|---|---|
+| 0:40 | Demostracion del proyecto ejecutandose en el host. |
+| 1:30 | Definicion de conceptos y terminos generales de Docker. |
+| 2:00 | Introduccion a Dockerfiles y construccion de imagenes. |
+| 7:40 | Uso de Dockerfiles multi-etapa y generacion de imagenes optimizadas. |
+| 12:10 | Comparacion entre imagenes de una sola etapa y multi-etapa. |
+| 12:45 | Uso de archivo .dockerignore para excluir archivos en la construccion. |
+| 15:10 | Creacion y gestion de contenedores. |
+| 17:50 | Introduccion a Docker Compose como herramienta de orquestacion. |
+| 22:00 | Ejecucion de servicios mediante Docker Compose. |
+| 23:40 | Demostracion del proyecto ejecutandose desde contenedores Docker. |

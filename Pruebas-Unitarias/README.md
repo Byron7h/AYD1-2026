@@ -1,232 +1,95 @@
-# Guia de clase: Unitarias e Integracion (Node y Python)
+# Pruebas-Unitarias: Guia General de Ejemplos
 
-## 1) Recomendacion directa para tu clase
+Esta carpeta concentra material practico de testing para backend en Node.js y Python,
+ademas de un bloque de refactorizacion para mejorar testabilidad.
 
-Usa como ejemplo principal **Pruebas-Unitarias**.
+## Temas principales de la carpeta
 
-Motivos:
-- Ya esta orientado a testing (unitarias + integracion).
-- Estructura simple para explicar Arrange / Act / Assert.
-- Incluye CI con GitHub Actions.
-- Tiene cobertura reportada y facil de mostrar.
+- Pruebas unitarias.
+- Pruebas de integracion sobre endpoints HTTP.
+- Uso de test doubles: mock, stub y fake.
+- Cobertura de codigo (coverage) e interpretacion de resultados.
+- Refactorizacion orientada a testabilidad.
 
-No uses **Clase8-SOLID** como ejemplo principal de pruebas.
-Ese proyecto esta mas enfocado en Docker y despliegue.
+## Estructura y que se ve en cada carpeta
 
-## 2) Cobertura actual que puedes mostrar
+### Ejemplo_Node
 
-Del reporte en `coverage/lcov-report/index.html`:
-- Statements: 90.62%
-- Branches: 70%
-- Functions: 100%
-- Lines: 90.62%
+Que abarca:
 
-Lectura didactica:
-- Bien cubiertas funciones y flujo base.
-- Faltan ramas (branches), ideal para explicar "que falta probar".
+- API simple con Express.
+- Unitarias con Jest.
+- Integracion HTTP con Supertest.
+- Coverage con reporte HTML.
+- Guion completo de clase para exposicion.
 
-## 3) Definiciones claras (test doubles)
+Enlaces de referencia:
 
-- Dummy:
-  - Objeto de relleno, casi no se usa en asserts.
-- Stub:
-  - Retorna datos fijos para controlar el flujo.
-  - Ejemplo: `clock.now()` devuelve fecha fija.
-- Mock:
-  - Doble con expectativas de llamadas.
-  - Ejemplo: verificar que `tokenService.sign(...)` fue llamado con cierto payload.
-- Spy:
-  - Observa llamadas a una funcion real o mock sin cambiar toda su logica.
-- Fake:
-  - Implementacion simplificada pero funcional.
-  - Ejemplo: repositorio en memoria.
+- Guia del ejemplo: [Ejemplo_Node/README.md](Ejemplo_Node/README.md)
+- Configuracion de Jest: [Ejemplo_Node/jest.config.cjs](Ejemplo_Node/jest.config.cjs)
+- CI de ejemplo: [Ejemplo_Node/ci/github-actions-tests.yml](Ejemplo_Node/ci/github-actions-tests.yml)
+- Reporte HTML de coverage: [Ejemplo_Node/coverage/lcov-report/index.html](Ejemplo_Node/coverage/lcov-report/index.html)
 
-Nota importante:
-- Lo que dijiste como "Subs" normalmente se refiere a **Stubs**.
+### Ejemplo-Python
 
-## 4) Unitarias vs Integracion (para explicar en clase)
+Que abarca:
 
-Unitarias:
-- Prueban una sola unidad de negocio.
-- Se aislan dependencias externas con doubles (mocks/stubs/fakes).
-- Son rapidas y muy especificas.
+- API simple con FastAPI.
+- Unitarias con pytest.
+- Integracion HTTP con FastAPI TestClient.
+- Coverage con pytest-cov.
+- Configuracion para imports estables de src en pruebas.
 
-Integracion:
-- Prueban colaboracion entre componentes reales de la app.
-- En este repo: ruta HTTP + Express + traduccion de errores.
-- Puedes mockear fronteras externas (DB, APIs externas), pero no toda la app.
+Enlaces de referencia:
 
-Regla practica para tus companeros:
-- Unitarias: 70-80% del total de pruebas.
-- Integracion: 20-30% del total.
+- Guia del ejemplo: [Ejemplo-Python/README.md](Ejemplo-Python/README.md)
+- Dependencias Python: [Ejemplo-Python/requirements.txt](Ejemplo-Python/requirements.txt)
+- Configuracion de pytest: [Ejemplo-Python/pytest.ini](Ejemplo-Python/pytest.ini)
+- Soporte de imports para tests: [Ejemplo-Python/tests/conftest.py](Ejemplo-Python/tests/conftest.py)
 
-## 5) Que mostrar en Node.js (este repo)
+### Refactorizacion
 
-### Archivos clave
-- `src/authService.js`
-- `src/appointmentService.js`
-- `src/app.js`
-- `tests/unit/authService.test.js`
-- `tests/unit/appointmentService.test.js`
-- `tests/integration/app.test.js`
+Que abarca:
 
-### 5 unitarias sugeridas (plantilla para el proyecto de ellos)
+- Comparativa de codigo antes y despues de refactor.
+- Problemas de acoplamiento que dificultan pruebas.
+- Inyeccion de dependencias para habilitar test unitario.
+- Ejemplo de prueba que valida resultado e interacciones.
 
-1. Login exitoso retorna token (mock de repo/hash/token).
-2. Login falla si usuario no existe (error INVALID_CREDENTIALS).
-3. Cita en el pasado falla (APPOINTMENT_MUST_BE_FUTURE).
-4. Cita en conflicto falla (APPOINTMENT_CONFLICT).
-5. Cita futura sin conflicto se guarda (stub de reloj + fake repo).
+Enlaces de referencia:
 
-### 2 integracion sugeridas
+- Guia del bloque: [Refactorizacion/README.md](Refactorizacion/README.md)
+- Version antes (no testeable): [Refactorizacion/antes/orderService.js](Refactorizacion/antes/orderService.js)
+- Version despues (testeable): [Refactorizacion/despues/orderService.js](Refactorizacion/despues/orderService.js)
+- Prueba unitaria del refactor: [Refactorizacion/despues/orderService.test.js](Refactorizacion/despues/orderService.test.js)
 
-1. `GET /health` responde 200 y `{ ok: true }`.
-2. `POST /login` traduce error de negocio a HTTP 401.
+## Que tecnologias se usan en esta clase
 
-## 6) Guion rapido de exposicion (20-25 min)
+- Node.js, Express, Jest, Supertest.
+- Python 3.10+, FastAPI, pytest, pytest-cov.
+- GitHub Actions para ejecucion automatica de pruebas.
 
-1. Contexto (2 min):
-- "No buscamos 1000 tests; buscamos tests utiles y mantenibles".
+## Resultado de aprendizaje esperado
 
-2. Unitarias (8 min):
-- Explicar AAA (Arrange, Act, Assert).
-- Mostrar mock en authService.
-- Mostrar stub + fake en appointmentService.
+Al finalizar este bloque, el estudiante deberia poder:
 
-3. Integracion (8 min):
-- Mostrar supertest contra app Express.
-- Explicar por que aqui se prueba endpoint real.
+- Separar logica de negocio de infraestructura.
+- Escribir pruebas unitarias con doubles adecuados.
+- Escribir pruebas de integracion para contratos HTTP.
+- Interpretar un reporte de coverage y detectar huecos de prueba.
+- Refactorizar codigo para hacerlo mas testeable.
 
-4. Coverage (4 min):
-- Abrir reporte HTML.
-- Explicar por que 100% funciones no implica 100% calidad.
+## Video de Ejemplo
 
-5. Cierre (2 min):
-- "Tarea: construyan 5 unitarias + 2 integracion para su propio backend".
+- Video Ejemplo (Pruebas Unitarias e Integracion): [https://drive.google.com/drive/folders/10lnHa-AMrlNmAP2U9qZzAwogDNZq0GWP?usp=sharing](https://drive.google.com/drive/folders/10lnHa-AMrlNmAP2U9qZzAwogDNZq0GWP?usp=sharing)
 
-## 7) Version Python equivalente (para que emulen)
+Desglose del contenido del video:
 
-Si ellos tambien usan Python, este mismo patron se mapea con:
-- pytest (unitarias)
-- FastAPI + TestClient (integracion)
-- unittest.mock / monkeypatch (mocks y stubs)
-
-### Ejemplo unitario Python (mock)
-
-```python
-# tests/test_auth_service.py
-from unittest.mock import Mock
-import pytest
-
-class AuthService:
-    def __init__(self, user_repo, hasher, token_service):
-        self.user_repo = user_repo
-        self.hasher = hasher
-        self.token_service = token_service
-
-    def login(self, email, password):
-        user = self.user_repo.find_by_email(email)
-        if not user:
-            raise ValueError("INVALID_CREDENTIALS")
-        if not self.hasher.compare(password, user["password_hash"]):
-            raise ValueError("INVALID_CREDENTIALS")
-        return self.token_service.sign({"user_id": user["id"], "role": user["role"]})
-
-
-def test_login_success_returns_token():
-    user_repo = Mock()
-    hasher = Mock()
-    token_service = Mock()
-
-    user_repo.find_by_email.return_value = {
-        "id": 10,
-        "email": "test@demo.com",
-        "password_hash": "hash-123",
-        "role": "student",
-    }
-    hasher.compare.return_value = True
-    token_service.sign.return_value = "token-abc"
-
-    service = AuthService(user_repo, hasher, token_service)
-
-    token = service.login("test@demo.com", "secret")
-
-    assert token == "token-abc"
-    user_repo.find_by_email.assert_called_once_with("test@demo.com")
-    hasher.compare.assert_called_once_with("secret", "hash-123")
-    token_service.sign.assert_called_once_with({"user_id": 10, "role": "student"})
-
-
-def test_login_fails_when_user_missing():
-    user_repo = Mock()
-    hasher = Mock()
-    token_service = Mock()
-
-    user_repo.find_by_email.return_value = None
-
-    service = AuthService(user_repo, hasher, token_service)
-
-    with pytest.raises(ValueError, match="INVALID_CREDENTIALS"):
-        service.login("missing@demo.com", "123")
-```
-
-### Ejemplo integracion Python (FastAPI)
-
-```python
-# tests/test_app_integration.py
-from fastapi import FastAPI, HTTPException
-from fastapi.testclient import TestClient
-
-
-def build_app(auth_service):
-    app = FastAPI()
-
-    @app.get("/health")
-    def health():
-        return {"ok": True}
-
-    @app.post("/login")
-    def login(payload: dict):
-        try:
-            token = auth_service.login(payload["email"], payload["password"])
-            return {"token": token}
-        except ValueError as e:
-            if str(e) == "INVALID_CREDENTIALS":
-                raise HTTPException(status_code=401, detail="invalid credentials")
-            raise HTTPException(status_code=500, detail="internal error")
-
-    return app
-
-
-class AuthStub:
-    def __init__(self, mode="ok"):
-        self.mode = mode
-
-    def login(self, _email, _password):
-        if self.mode == "ok":
-            return "token-demo"
-        raise ValueError("INVALID_CREDENTIALS")
-
-
-def test_health_200():
-    client = TestClient(build_app(AuthStub("ok")))
-    res = client.get("/health")
-    assert res.status_code == 200
-    assert res.json() == {"ok": True}
-
-
-def test_login_401_for_invalid_credentials():
-    client = TestClient(build_app(AuthStub("invalid")))
-    res = client.post("/login", json={"email": "demo@demo.com", "password": "wrong"})
-    assert res.status_code == 401
-    assert res.json()["detail"] == "invalid credentials"
-```
-
-## 8) Mensaje final para tus companeros
-
-"Copien la estructura y no solo el codigo:
-- separen logica de negocio,
-- inyecten dependencias,
-- escriban unitarias primero para reglas,
-- luego integracion para endpoints,
-- y revisen coverage para detectar huecos."
+| Tiempo | Contenido |
+|---|---|
+| 00:00 | **Introduccion y temas que se abarcan.** |
+| 1:15 | **[Node] Explicacion del codigo a testear con inyeccion de dependencias.**<br>- (2:00) Librerias del proyecto.<br>- (3:00) Recorrido de src/authService.js.<br>- (4:40) Recorrido de src/appointmentService.js.<br>- (6:40) Recorrido de src/app.js. |
+| 8:50 | **[Node] Pruebas unitarias.**<br>- (10:10) Estructura de una prueba.<br>- (10:40) Que es un Mock.<br>- (15:40) Que es un Fake.<br>- (18:15) Que es un Stub.<br>- (21:30) Ejecucion de pruebas unitarias.<br>- (23:40) Fallo intencional de una prueba.<br>- (25:35) Cobertura de codigo.<br>- (27:00) Reporte HTML de coverage.<br>- (28:30) Como interpretar reportes para detectar codigo sin testear.<br>- (28:50) Vista rapida de integracion de pruebas en despliegue automatico. |
+| 32:00 | **[Node] Pruebas de integracion.**<br>- (33:00) Estructura de la prueba de integracion.<br>- (35:50) Ejecucion de pruebas de integracion. |
+| 36:40 | **[Python] Pruebas unitarias y de integracion.**<br>- (37:00) Explicacion del codigo (misma app que Node).<br>- (39:40) Ejecucion de pruebas y reporte de cobertura. |
+| 40:00 | **Bonus: refactorizacion de codigo con IA (CodeX)**.<br>- (40:50) Como usar la IA integrada en VS Code para refactorizar codigo. |
