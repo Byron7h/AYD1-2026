@@ -72,6 +72,8 @@ Enlaces de referencia:
 - Ejemplo Node (Jest + Supertest): [Pruebas-Unitarias/Ejemplo_Node/README.md](Pruebas-Unitarias/Ejemplo_Node/README.md)
 - Ejemplo Python (pytest + FastAPI): [Pruebas-Unitarias/Ejemplo-Python/README.md](Pruebas-Unitarias/Ejemplo-Python/README.md)
 - Refactorizacion orientada a testing: [Pruebas-Unitarias/Refactorizacion/README.md](Pruebas-Unitarias/Refactorizacion/README.md)
+- Cómo documentar Pruebas unitarias: [Pruebas-Unitarias/Implementacion-proyecto/](Pruebas-Unitarias/Implementacion-proyecto/)
+  - [Documentacion-pruebas.md](Pruebas-Unitarias/Implementacion-proyecto/Documentacion-pruebas.md): Tests de AuthService y AppointmentService
 - Video Ejemplo (ejemplo): [https://drive.google.com/drive/folders/10lnHa-AMrlNmAP2U9qZzAwogDNZq0GWP?usp=sharing](https://drive.google.com/drive/folders/10lnHa-AMrlNmAP2U9qZzAwogDNZq0GWP?usp=sharing)
 
 Desglose del video (Pruebas Unitarias, Integracion y Coverage):
@@ -98,6 +100,9 @@ Enlaces de referencia:
 
 - Vista general del bloque: [Pruebas-end-to-end/README.md](Pruebas-end-to-end/README.md)
 - Configuracion Cypress: [Pruebas-end-to-end/cypress.config.js](Pruebas-end-to-end/cypress.config.js)
+- Cómo documentar Pruebas End to End: [Pruebas-end-to-end/Implementacion-proyecto/](Pruebas-end-to-end/Implementacion-proyecto/)
+  - [Documentacion-pruebas-E2E.md](Pruebas-end-to-end/Implementacion-proyecto/Documentacion-pruebas-E2E.md): 4 casos de prueba docuemntados
+  - Ejemplo de Prueba End to end Enfocada al Proyecto del Laboratorio
 - Pruebas E2E ejemplos:
   - [Primera prueba](Pruebas-end-to-end/cypress/e2e/01-primera-prueba.cy.js)
   - [Pruebas de productos](Pruebas-end-to-end/cypress/e2e/02-productos.cy.js)

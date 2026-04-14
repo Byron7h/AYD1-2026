@@ -63,6 +63,23 @@ Enlaces de referencia:
 - Version despues (testeable): [Refactorizacion/despues/orderService.js](Refactorizacion/despues/orderService.js)
 - Prueba unitaria del refactor: [Refactorizacion/despues/orderService.test.js](Refactorizacion/despues/orderService.test.js)
 
+### Implementacion-proyecto
+
+Que abarca:
+
+- Ejemplos completos de pruebas unitarias en el contexto del proyecto del laboratorio.
+- Documentacion detallada con casos reales de uso.
+- Tests de AuthService y AppointmentService.
+- Demostracion de tecnicas avanzadas: mocks, stubs y fakes.
+
+Enlaces de referencia:
+
+- Documentacion completa: [Implementacion-proyecto/Documentacion-pruebas.md](Implementacion-proyecto/Documentacion-pruebas.md)
+- Tests de LoginEP: [Implementacion-proyecto/loginEP.test.js](Implementacion-proyecto/loginEP.test.js)
+- Tests de Programar Cita: [Implementacion-proyecto/programarCita.test.js](Implementacion-proyecto/programarCita.test.js)
+- Tests de Registrar Tratamiento: [Implementacion-proyecto/registrarTratamiento.test.js](Implementacion-proyecto/registrarTratamiento.test.js)
+- Capturas de ejecucion: [Implementacion-proyecto/imgs/](Implementacion-proyecto/imgs/)
+
 ## Que tecnologias se usan en esta clase
 
 - Node.js, Express, Jest, Supertest.
@@ -78,6 +95,18 @@ Al finalizar este bloque, el estudiante deberia poder:
 - Escribir pruebas de integracion para contratos HTTP.
 - Interpretar un reporte de coverage y detectar huecos de prueba.
 - Refactorizar codigo para hacerlo mas testeable.
+
+### Implementacion-proyecto
+
+Carpeta con ejemplos de como documentar pruebas unitarias utilizando los ejemplos vistos en clase. Además de ejemplos de Pruebas unitarias en el contexto de su proyecto del laboratorio
+
+Enlaces de referencia:
+
+- Cómo documentar Pruebas Unitarias: [Implementacion-proyecto/Documentacion-pruebas.md](Implementacion-proyecto/Documentacion-pruebas.md)
+- Tests de LoginEP: [Implementacion-proyecto/loginEP.test.js](Implementacion-proyecto/loginEP.test.js)
+- Tests de Programar Cita: [Implementacion-proyecto/programarCita.test.js](Implementacion-proyecto/programarCita.test.js)
+- Tests de Registrar Tratamiento: [Implementacion-proyecto/registrarTratamiento.test.js](Implementacion-proyecto/registrarTratamiento.test.js)
+- Capturas de ejecucion: [Implementacion-proyecto/imgs/](Implementacion-proyecto/imgs/)
 
 ## Video de Ejemplo
 
