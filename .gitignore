@@ -138,8 +138,15 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Pruebas unitarias y de integración
 .venv
 pycache/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Pruebas end-to-end 
+node_modules/
+cypress/screenshots/
+cypress/videos/
+

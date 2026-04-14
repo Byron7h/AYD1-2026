@@ -99,19 +99,19 @@ export default function App() {
       <header style={S.hdr}>
         <span style={S.logo}>SOLID Orders</span>
         <span style={S.note}>frontend (nginx:80) → backend (node:3000) → Neon PostgreSQL</span>
-        <button onClick={load} style={{ ...S.btn, marginLeft: "auto", padding: "5px 12px", fontSize: 12 }}>
+        <button data-cy="refresh-data" onClick={load} style={{ ...S.btn, marginLeft: "auto", padding: "5px 12px", fontSize: 12 }}>
           {loading ? "..." : "↺"}
         </button>
       </header>
 
       <div style={S.body}>
         {error && (
-          <div style={S.err}>⚠ {error} <span style={{ cursor: "pointer", textDecoration: "underline", marginLeft: 8 }} onClick={() => setError("")}>cerrar</span></div>
+          <div data-cy="error-message" style={S.err}>⚠ {error} <span data-cy="close-error" style={{ cursor: "pointer", textDecoration: "underline", marginLeft: 8 }} onClick={() => setError("")}>cerrar</span></div>
         )}
 
         <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-          <button style={S.tab(tab === "orders")}   onClick={() => setTab("orders")}>📦 Órdenes ({orders.length})</button>
-          <button style={S.tab(tab === "products")} onClick={() => setTab("products")}>🏷 Productos ({products.length})</button>
+          <button data-cy="tab-orders" style={S.tab(tab === "orders")}   onClick={() => setTab("orders")}>📦 Órdenes ({orders.length})</button>
+          <button data-cy="tab-products" style={S.tab(tab === "products")} onClick={() => setTab("products")}>🏷 Productos ({products.length})</button>
         </div>
 
         {tab === "orders" && (
@@ -119,29 +119,29 @@ export default function App() {
             <div style={S.card}>
               <span style={S.lbl}>Nueva orden</span>
               <label style={S.lbl}>Email del cliente</label>
-              <input style={S.inp} placeholder="cliente@ejemplo.com" value={oEmail} onChange={e => setOEmail(e.target.value)} />
+              <input data-cy="order-email" style={S.inp} placeholder="cliente@ejemplo.com" value={oEmail} onChange={e => setOEmail(e.target.value)} />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 90px", gap: 10 }}>
                 <div>
                   <label style={S.lbl}>Producto</label>
-                  <select style={S.inp} value={oProductId} onChange={e => setOProductId(e.target.value)}>
+                  <select data-cy="order-product" style={S.inp} value={oProductId} onChange={e => setOProductId(e.target.value)}>
                     <option value="">— seleccionar —</option>
                     {products.map(p => <option key={p.id} value={p.id}>{p.name} — ${p.price} ({p.stock} en stock)</option>)}
                   </select>
                 </div>
                 <div>
                   <label style={S.lbl}>Cantidad</label>
-                  <input style={S.inp} type="number" min="1" value={oQty} onChange={e => setOQty(e.target.value)} />
+                  <input data-cy="order-qty" style={S.inp} type="number" min="1" value={oQty} onChange={e => setOQty(e.target.value)} />
                 </div>
               </div>
-              <button style={S.btn} onClick={createOrder}>Crear orden</button>
+              <button data-cy="create-order" style={S.btn} onClick={createOrder}>Crear orden</button>
             </div>
 
             <div style={S.card}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <table data-cy="orders-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead><tr><th style={S.th}>#</th><th style={S.th}>Cliente</th><th style={S.th}>Total</th><th style={S.th}>Estado</th></tr></thead>
                 <tbody>
                   {orders.length === 0
-                    ? <tr><td style={{ ...S.td, color: "#444", textAlign: "center" }} colSpan={4}>Sin órdenes aún</td></tr>
+                    ? <tr><td data-cy="orders-empty" style={{ ...S.td, color: "#444", textAlign: "center" }} colSpan={4}>Sin órdenes aún</td></tr>
                     : orders.map(o => (
                         <tr key={o.id}>
                           <td style={{ ...S.td, fontFamily: "monospace", color: "#444" }}>{o.id}</td>
@@ -161,19 +161,19 @@ export default function App() {
             <div style={S.card}>
               <span style={S.lbl}>Nuevo producto</span>
               <div style={S.grid2}>
-                <div><label style={S.lbl}>Nombre</label><input style={S.inp} placeholder="Laptop Dell" value={pName} onChange={e => setPName(e.target.value)} /></div>
-                <div><label style={S.lbl}>Precio ($)</label><input style={S.inp} type="number" placeholder="0.00" value={pPrice} onChange={e => setPPrice(e.target.value)} /></div>
-                <div><label style={S.lbl}>Stock</label><input style={S.inp} type="number" placeholder="0" value={pStock} onChange={e => setPStock(e.target.value)} /></div>
+                <div><label style={S.lbl}>Nombre</label><input data-cy="product-name" style={S.inp} placeholder="Laptop Dell" value={pName} onChange={e => setPName(e.target.value)} /></div>
+                <div><label style={S.lbl}>Precio ($)</label><input data-cy="product-price" style={S.inp} type="number" placeholder="0.00" value={pPrice} onChange={e => setPPrice(e.target.value)} /></div>
+                <div><label style={S.lbl}>Stock</label><input data-cy="product-stock" style={S.inp} type="number" placeholder="0" value={pStock} onChange={e => setPStock(e.target.value)} /></div>
               </div>
-              <button style={S.btn} onClick={createProduct}>Agregar producto</button>
+              <button data-cy="create-product" style={S.btn} onClick={createProduct}>Agregar producto</button>
             </div>
 
             <div style={S.card}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <table data-cy="products-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead><tr><th style={S.th}>#</th><th style={S.th}>Nombre</th><th style={S.th}>Precio</th><th style={S.th}>Stock</th></tr></thead>
                 <tbody>
                   {products.length === 0
-                    ? <tr><td style={{ ...S.td, color: "#444", textAlign: "center" }} colSpan={4}>Sin productos aún</td></tr>
+                    ? <tr><td data-cy="products-empty" style={{ ...S.td, color: "#444", textAlign: "center" }} colSpan={4}>Sin productos aún</td></tr>
                     : products.map(p => (
                         <tr key={p.id}>
                           <td style={{ ...S.td, fontFamily: "monospace", color: "#444" }}>{p.id}</td>
