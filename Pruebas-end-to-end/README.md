@@ -11,7 +11,8 @@
 8. [Las 5 Pruebas Explicadas](#las-5-pruebas-explicadas)
 9. [Cambios en el Frontend](#cambios-en-el-frontend)
 10. [Cómo Interpretar Resultados](#cómo-interpretar-resultados)
-11. [Troubleshooting](#troubleshooting)
+11. [Ejemplos del Proyecto](#ejemplos-del-proyecto)
+12. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -1033,6 +1034,37 @@ Si quisieras testear el backend directamente (tests de API), sí necesitarías c
 
 ---
 
+## Cómo docuemntar pruebas End To End
+
+### Implementacion-proyecto
+
+Carpeta con ejemplos completos de pruebas E2E documentadas en el contexto del proyecto del laboratorio (aplicación SOLID Orders).
+
+**Ubicación:** `Pruebas-end-to-end/Implementacion-proyecto/`
+
+**Contenido:**
+- [Documentacion-pruebas-E2E.md](Implementacion-proyecto/Documentacion-pruebas-E2E.md): Guía detallada con los 4 casos de prueba implementados:
+  1. **Verificación de Carga** - Validación básica de elementos
+  2. **CRUD Básico** - Crear un producto desde la UI
+  3. **Flujo Completo** - Crear producto y orden en un mismo flujo
+  4. **Validaciones y Casos Negativos** - Validar manejo de errores
+
+Cada prueba incluye:
+- Descripción del caso de uso
+- Código del test
+- Capturas de ejecución
+- Verificaciones realizadas
+
+**Resumen de tests:**
+| Test | Descripción | Tipo |
+|------|-------------|------|
+| 01-primera-prueba.cy.js | Carga de aplicación | Smoke |
+| 02-productos.cy.js | Crear producto | CRUD |
+| 03-ordenes.cy.js | Producto + Orden | Flujo |
+| 04-validaciones.cy.js | Errores comunes | Negativo |
+
+---
+
 ## Troubleshooting
 
 ### Error: `bad IPC message reason 114` en Cypress Open
@@ -1089,17 +1121,6 @@ Es por diseño, es una VENTAJA. Los `data-cy` no se rompen con cambios de CSS.
 - Cambias el atributo `data-cy` en el Frontend
 - Cambias la lógica (ej: antes validaba email, ahora no)
 - Cambias el flujo de la app
-
----
-
-## Próximos Pasos
-
-1. ✅ Entender qué es Cypress y E2E
-2. ✅ Instalar Cypress en tu máquina
-3. ✅ Ver los 5 tests correr
-4. ⏭️ Modificar un test existente
-5. ⏭️ Crear tu propio test
-6. ⏭️ Integrar con CI/CD (GitHub Actions)
 
 ---
 
