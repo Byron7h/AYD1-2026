@@ -16,10 +16,19 @@ jobs:
         with:
           node-version: 22
 
+      - name: "🔎 Validar variable VITE_API_URL_PROD"
+        run: |
+          if [ -z "${{ vars.VITE_API_URL_PROD }}" ]; then
+            echo "❌ Falta configurar Repository Variable: VITE_API_URL_PROD"
+            exit 1
+          fi
+
       - name: "🏗️ Build del frontend"
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL_PROD }}
         run: |
           cd CICD/frontend
-          npm install
+          npm ci
           npm run build
 
       # Secrets necesarios en GitHub:
