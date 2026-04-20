@@ -43,48 +43,27 @@ jobs:
           cd CICD/backend
           npm install
           npm test
+
   deploy:
     runs-on: ubuntu-latest
     needs: test
-    env:
-      GCP_REGION: us-central1
-      AR_REPO: cicd-demo
+    # Nivel 1: deploy temporal en runner para demostrar el flujo CI/CD completo.
     steps:
       - name: "📥 Checkout del codigo"
         uses: actions/checkout@v4
 
-      - name: "🔐 Autenticar con GCP"
-        uses: google-github-actions/auth@v2
+      - name: "🟢 Configurar Node.js 22"
+        uses: actions/setup-node@v4
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          node-version: 22
 
-      - name: "🛠️ Configurar gcloud"
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: "📦 Crear repositorio de Artifact Registry (si no existe)"
+      - name: "🚀 Deploy temporal en runner"
         run: |
-          gcloud artifacts repositories describe "$AR_REPO" \
-            --location="$GCP_REGION" \
-            --project="${{ secrets.GCP_PROJECT_ID }}" \
-          || gcloud artifacts repositories create "$AR_REPO" \
-            --repository-format=docker \
-            --location="$GCP_REGION" \
-            --project="${{ secrets.GCP_PROJECT_ID }}" \
-            --description="Docker repository for CI/CD backend images"
+          cd CICD/backend
+          npm install --omit=dev
+          npm start &
+          sleep 3
+          curl http://localhost:3000/health
+          echo "✅ Backend corriendo en el runner"
 
-      - name: "🐳 Build y push a Artifact Registry"
-        run: |
-          gcloud auth configure-docker "$GCP_REGION-docker.pkg.dev" --quiet
-          IMAGE_URI="$GCP_REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$AR_REPO/cicd-demo-backend:latest"
-          docker build -t "$IMAGE_URI" ./CICD/backend
-          docker push "$IMAGE_URI"
-
-      - name: "☁️ Deploy a Cloud Run"
-        run: |
-          IMAGE_URI="$GCP_REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$AR_REPO/cicd-demo-backend:latest"
-          gcloud run deploy cicd-demo-backend \
-            --image "$IMAGE_URI" \
-            --platform managed \
-            --region "$GCP_REGION" \
-            --allow-unauthenticated \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},PORT=3000
+    # Nota: este deploy es solo demostrativo; al terminar el job, el proceso se apaga.
