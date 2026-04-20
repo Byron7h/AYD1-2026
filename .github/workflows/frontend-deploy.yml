@@ -1,0 +1,34 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "📥 Checkout del codigo"
+        uses: actions/checkout@v4
+
+      - name: "🟢 Configurar Node.js 22"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: "🏗️ Build del frontend"
+        run: |
+          cd CICD/frontend
+          npm install
+          npm run build
+
+      # Secrets necesarios en GitHub:
+      # - FIREBASE_SERVICE_ACCOUNT : JSON de Service Account con permisos Firebase
+      # - GCP_PROJECT_ID           : tu project ID de GCP
+      - name: "🔥 Deploy a Firebase Hosting"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ secrets.GCP_PROJECT_ID }}
+          entryPoint: CICD/frontend
