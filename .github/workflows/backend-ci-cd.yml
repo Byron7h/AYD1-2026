@@ -43,75 +43,32 @@ jobs:
           cd CICD/backend
           npm install
           npm test
-
   deploy:
     runs-on: ubuntu-latest
     needs: test
-    # Nivel 1 activo: deploy temporal en runner para demostrar el flujo CI/CD completo.
     steps:
       - name: "📥 Checkout del codigo"
         uses: actions/checkout@v4
 
-      - name: "🟢 Configurar Node.js 22"
-        uses: actions/setup-node@v4
+      - name: "🔐 Autenticar con GCP"
+        uses: google-github-actions/auth@v2
         with:
-          node-version: 22
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: "🚀 Deploy Nivel 1 (temporal en runner)"
+      - name: "🛠️ Configurar gcloud"
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: "🐳 Build y push a Google Container Registry"
         run: |
-          cd CICD/backend
-          npm install --omit=dev
-          npm start &
-          sleep 3
-          curl http://localhost:3000/health
-          echo "✅ Backend corriendo en el runner"
+          gcloud auth configure-docker --quiet
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest ./CICD/backend
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest
 
-    # Nivel 1 es temporal: al terminar el job, el proceso desaparece.
-    # En produccion real se usa el Nivel 2 con Cloud Run.
-
-# ══════════════════════════════════════════════════════════════
-# NIVEL 2: Deploy real a GCP Cloud Run
-#
-# Para activar este nivel:
-# 1. Comentar todo el bloque "Nivel 1" del job deploy de arriba
-# 2. Descomentar este bloque completo
-# 3. Agregar estos secrets en GitHub (repo -> Settings -> Secrets -> Actions):
-#    - GCP_PROJECT_ID  : tu project ID de GCP (ej: mi-proyecto-123456)
-#    - GCP_SA_KEY      : contenido JSON completo de tu Service Account
-#    - DATABASE_URL    : string de conexion de Neon
-#
-# Permisos necesarios en la Service Account de GCP:
-#    - Cloud Run Admin
-#    - Storage Admin
-#    - Service Account User
-# ══════════════════════════════════════════════════════════════
-#
-#  deploy:
-#    runs-on: ubuntu-latest
-#    needs: test
-#    steps:
-#      - name: "📥 Checkout del codigo"
-#        uses: actions/checkout@v4
-#
-#      - name: "🔐 Autenticar con GCP"
-#        uses: google-github-actions/auth@v2
-#        with:
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#
-#      - name: "🛠️ Configurar gcloud"
-#        uses: google-github-actions/setup-gcloud@v2
-#
-#      - name: "🐳 Build y push a Google Container Registry"
-#        run: |
-#          gcloud auth configure-docker --quiet
-#          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest ./CICD/backend
-#          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest
-#
-#      - name: "☁️ Deploy a Cloud Run"
-#        run: |
-#          gcloud run deploy cicd-demo-backend \
-#            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest \
-#            --platform managed \
-#            --region us-central1 \
-#            --allow-unauthenticated \
-#            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},PORT=3000
+      - name: "☁️ Deploy a Cloud Run"
+        run: |
+          gcloud run deploy cicd-demo-backend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},PORT=3000
