@@ -46,6 +46,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: test
+    env:
+      GCP_REGION: us-central1
+      AR_REPO: cicd-demo
     steps:
       - name: "📥 Checkout del codigo"
         uses: actions/checkout@v4
@@ -58,17 +61,30 @@ jobs:
       - name: "🛠️ Configurar gcloud"
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: "🐳 Build y push a Google Container Registry"
+      - name: "📦 Crear repositorio de Artifact Registry (si no existe)"
         run: |
-          gcloud auth configure-docker --quiet
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest ./CICD/backend
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest
+          gcloud artifacts repositories describe "$AR_REPO" \
+            --location="$GCP_REGION" \
+            --project="${{ secrets.GCP_PROJECT_ID }}" \
+          || gcloud artifacts repositories create "$AR_REPO" \
+            --repository-format=docker \
+            --location="$GCP_REGION" \
+            --project="${{ secrets.GCP_PROJECT_ID }}" \
+            --description="Docker repository for CI/CD backend images"
+
+      - name: "🐳 Build y push a Artifact Registry"
+        run: |
+          gcloud auth configure-docker "$GCP_REGION-docker.pkg.dev" --quiet
+          IMAGE_URI="$GCP_REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$AR_REPO/cicd-demo-backend:latest"
+          docker build -t "$IMAGE_URI" ./CICD/backend
+          docker push "$IMAGE_URI"
 
       - name: "☁️ Deploy a Cloud Run"
         run: |
+          IMAGE_URI="$GCP_REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$AR_REPO/cicd-demo-backend:latest"
           gcloud run deploy cicd-demo-backend \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/cicd-demo-backend:latest \
+            --image "$IMAGE_URI" \
             --platform managed \
-            --region us-central1 \
+            --region "$GCP_REGION" \
             --allow-unauthenticated \
             --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},PORT=3000
