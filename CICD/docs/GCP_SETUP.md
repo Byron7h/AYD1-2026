@@ -45,7 +45,7 @@ Configurar Google Cloud Platform y Firebase para hacer deploy automático:
 **Verificación:**
 - Ve a [APIs & Services -> Enabled APIs](https://console.cloud.google.com/apis/dashboard)
 - Deberías ver estas APIs listadas:
-  - ✅ Cloud Run API
+   - ✅ Cloud Run API
    - ✅ Artifact Registry API
    - ✅ Cloud Resource Manager API
    - ✅ Firebase Management API
@@ -373,7 +373,3 @@ gcloud artifacts docker images list us-central1-docker.pkg.dev/TU_PROJECT_ID/cic
 # Eliminar todo (si necesitas empezar de nuevo)
 gcloud run delete cicd-demo-backend --region us-central1
 ```
-
----
-
-**¿Listo?** Una vez que hagas push, GitHub Actions ejecutará el workflow Nivel 2 automáticamente. 🚀

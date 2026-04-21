@@ -109,3 +109,20 @@ Enlaces de referencia:
   - [Pruebas de ordenes](Pruebas-end-to-end/cypress/e2e/03-ordenes.cy.js)
   - [Validaciones](Pruebas-end-to-end/cypress/e2e/04-validaciones.cy.js)
   - [Comandos basicos demo](Pruebas-end-to-end/cypress/e2e/05-comandos-basicos-demo.cy.js)
+
+### CICD
+
+Tema general:
+
+- Ejemplo practico de CI/CD con GitHub Actions para backend y frontend.
+- Enfoque por niveles: Nivel 1 (runner GitHub) y Nivel 2 (despliegue en nube).
+- Uso de Docker, pruebas unitarias con Jest y despliegue opcional en GCP/Firebase.
+
+Enlaces de referencia:
+
+- Vista general del bloque: [CICD/README.md](CICD/README.md)
+- Setup base y demo vista en clase: [CICD/docs/SETUP.md](CICD/docs/SETUP.md)
+- Setup completo para nube (GCP/Firebase): [CICD/docs/GCP_SETUP.md](CICD/docs/GCP_SETUP.md)
+- Pipelines listos por niveles: [CICD/docs/pipelines-cicd-niveles.md](CICD/docs/pipelines-cicd-niveles.md)
+- Workflow activo en el repo: [.github/workflows/backend-ci-cd.yml](.github/workflows/backend-ci-cd.yml)
+- Orquestacion local del ejemplo: [CICD/docker-compose.yml](CICD/docker-compose.yml)
