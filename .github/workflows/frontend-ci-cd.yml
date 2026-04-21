@@ -1,0 +1,47 @@
+name: Frontend Deploy  # Nombre del workflow
+
+on:
+  push:
+    branches: [main]  # Se ejecuta al hacer push a main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest  # VM temporal
+
+    steps:
+      - name: "📥 Checkout del codigo"
+        uses: actions/checkout@v4
+        # Clona el repositorio
+
+      - name: "🟢 Configurar Node.js 22"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+        # Prepara entorno Node
+
+      - name: "🔎 Validar variable VITE_API_URL_PROD"
+        run: |
+          if [ -z "${{ vars.VITE_API_URL_PROD }}" ]; then
+            echo "❌ Falta configurar Repository Variable: VITE_API_URL_PROD"
+            exit 1
+          fi
+        # Verifica que la variable exista
+
+      - name: "🏗️ Build del frontend"
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL_PROD }}
+        run: |
+          cd CICD/frontend
+          npm ci
+          npm run build
+        # Genera archivos estáticos (dist/)
+
+      - name: "🔥 Deploy a Firebase Hosting"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ secrets.GCP_PROJECT_ID }}
+          channelId: live
+          entryPoint: CICD/frontend
+        # Sube los archivos a Firebase Hosting
