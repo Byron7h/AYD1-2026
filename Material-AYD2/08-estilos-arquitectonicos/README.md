@@ -10,4 +10,6 @@ Estilos que se veran:
 
 > El estilo que elijan condicionara como organizan sus diagramas de componentes y despliegue.
 
+## Nota sobre el entregable 08
 
+El archivo [0.8-estilos-arquitectonicos.md](0.8-estilos-arquitectonicos.md) es un ejemplo de cómo pueden redactar esa sección en su propio proyecto.

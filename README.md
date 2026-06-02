@@ -126,3 +126,21 @@ Enlaces de referencia:
 - Pipelines listos por niveles: [CICD/docs/pipelines-cicd-niveles.md](CICD/docs/pipelines-cicd-niveles.md)
 - Workflow activo en el repo: [.github/workflows/backend-ci-cd.yml](.github/workflows/backend-ci-cd.yml)
 - Orquestacion local del ejemplo: [CICD/docker-compose.yml](CICD/docker-compose.yml)
+
+### Material-AYD2
+
+Tema general:
+
+- Material de apoyo para estudiantes de AYD1 que se preparan para AYD2.
+- Expone el proceso, la trazabilidad y la estructura de los entregables del proyecto.
+- No presenta la solucion completa, sino una guia para construir cada etapa.
+
+Enlaces de referencia:
+
+- Vista general del bloque: [Material-AYD2/README.md](Material-AYD2/README.md)
+- Core del negocio: [Material-AYD2/01-core/0.1-core.md](Material-AYD2/01-core/0.1-core.md)
+- Primera descomposicion: [Material-AYD2/02-primera-descomposicion/0.2-primera-descomposicion.md](Material-AYD2/02-primera-descomposicion/0.2-primera-descomposicion.md)
+- Casos de uso expandidos: [Material-AYD2/03-casos-de-uso-expandidos/0.3-cun-expandidos.md](Material-AYD2/03-casos-de-uso-expandidos/0.3-cun-expandidos.md)
+- Requerimientos y trazabilidad: [Material-AYD2/04-05-requerimientos/0.4-requerimientos-funcionales.md](Material-AYD2/04-05-requerimientos/0.4-requerimientos-funcionales.md), [Material-AYD2/06-matrices-trazabilidad/0.6-matrices-trazabilidad.md](Material-AYD2/06-matrices-trazabilidad/0.6-matrices-trazabilidad.md)
+- Diagramas y despliegue: [Material-AYD2/07-diagrama-bloques/0.7-diagrama-bloques.md](Material-AYD2/07-diagrama-bloques/0.7-diagrama-bloques.md), [Material-AYD2/08-estilos-arquitectonicos/0.8-estilos-arquitectonicos.md](Material-AYD2/08-estilos-arquitectonicos/0.8-estilos-arquitectonicos.md), [Material-AYD2/09-diagrama-despliegue/0.9-diagrama-despliegue.md](Material-AYD2/09-diagrama-despliegue/0.9-diagrama-despliegue.md)
+- Implementacion y presentaciones: [Material-AYD2/10-implementacion-codigo/README.md](Material-AYD2/10-implementacion-codigo/README.md), [Material-AYD2/11-presentaciones/README.md](Material-AYD2/11-presentaciones/README.md)

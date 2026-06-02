@@ -9,7 +9,7 @@ Este material es una guia de apoyo para estudiantes de AYD1 que se preparan para
 |---|------------|------|
 | 1 | Core del negocio | 01-core/0.1-core.md |
 | 2 | Primera descomposicion | 02-primera-descomposicion/0.2-primera-descomposicion.md |
-| 3 | Casos de uso expandidos | 03-casos-de-uso-expandidos/0.3-casos-de-uso-expandidos.md |
+| 3 | Casos de uso expandidos | 03-casos-de-uso-expandidos/0.3-cun-expandidos.md |
 | 4 | Requerimientos funcionales | 04-05-requerimientos/0.4-requerimientos-funcionales.md |
 | 5 | Requerimientos no funcionales | 04-05-requerimientos/0.5-requerimientos-no-funcionales.md |
 | 6 | Matrices de trazabilidad | 06-matrices-trazabilidad/0.6-matrices-trazabilidad.md |
@@ -19,4 +19,11 @@ Este material es una guia de apoyo para estudiantes de AYD1 que se preparan para
 | 10 | Implementacion en codigo | 10-implementacion-codigo/README.md |
 | 11 | Presentaciones | 11-presentaciones/README.md |
 
-> Este repositorio es material de referencia. No contiene la solucion completa del proyecto.
+
+## Clase de apoyo
+
+En la clase de apoyo se explicaron con más detalle los entregables y la lógica general de cómo construirlos. Si quieres revisar esa explicación, puedes usar estos enlaces:
+
+- [Grabación de la reunión](https://drive.google.com/file/d/1wsoOx-yE5m-RmQCpqNoJ2HnPmoEoC_Ih/view?usp=sharing)
+- [Presentación de la clase](https://drive.google.com/file/d/1iHL6f1DauKeEYfFMG_fKjN1ZnBlZspfU/view?usp=sharing)
+
